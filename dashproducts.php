@@ -34,13 +34,14 @@ class DashProducts extends Module
 		$this->name = 'dashproducts';
 		$this->displayName = 'Dashboard Products';
 		$this->tab = 'dashboard';
-		$this->version = '0.1';
+		$this->version = '0.2';
 		$this->author = 'PrestaShop';
 
 		$this->push_filename = _PS_CACHE_DIR_.'push/activity';
 		$this->allow_push = true;
 		
 		parent::__construct();
+		$this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
 	}
 
 	public function install()
