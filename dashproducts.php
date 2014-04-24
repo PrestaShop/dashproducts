@@ -285,7 +285,7 @@ class DashProducts extends Module
 			),
 			array(
 				'id' => 'rate',
-				'title' => $this->l('Rate'),
+				'title' => $this->l('Percentage'),
 				'class' => 'text-center',
 			)
 		);
