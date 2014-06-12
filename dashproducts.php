@@ -106,7 +106,7 @@ class DashProducts extends Module
 			array('title' => $this->l('Action'), 'class' => 'text-center'),
 		);
 
-		$limit = (int)Configuration::get('DASHPRODUCT_NBR_SHOW_LAST_ORDER') ? (int)Configuration::get('DASHPRODUCT_NBR_SHOW_LAST_ORDER') : null;
+		$limit = (int)Configuration::get('DASHPRODUCT_NBR_SHOW_LAST_ORDER') ? (int)Configuration::get('DASHPRODUCT_NBR_SHOW_LAST_ORDER') : 10;
 		$orders = Order::getOrdersWithInformations($limit);
 
 		$body = array();
