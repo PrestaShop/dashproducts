@@ -120,7 +120,7 @@ class DashProducts extends Module
 				'class' => 'text-left',
 			);
 			$tr[] = array(
-				'id' => 'state_name',
+				'id' => 'total_products',
 				'value' => count(OrderDetail::getList((int)$order['id_order'])),
 				'class' => 'text-center',
 			);
@@ -128,7 +128,7 @@ class DashProducts extends Module
 				'id' => 'total_paid',
 				'value' => Tools::displayPrice((float)$order['total_paid'], $currency),
 				'class' => 'text-center',
-				'wrapper_start' => '<span class="badge badge-success">',
+				'wrapper_start' => $order['valid'] ? '<span class="badge badge-success">' : '',
 				'wrapper_end' => '<span>',
 			);
 			$tr[] = array(
