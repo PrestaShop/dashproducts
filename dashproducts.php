@@ -32,7 +32,6 @@ class DashProducts extends Module
 	public function __construct()
 	{
 		$this->name = 'dashproducts';
-		$this->displayName = 'Dashboard Products';
 		$this->tab = 'dashboard';
 		$this->version = '0.3.1';
 		$this->author = 'PrestaShop';
@@ -41,6 +40,7 @@ class DashProducts extends Module
 		$this->allow_push = true;
 		
 		parent::__construct();
+		$this->displayName = $this->l('Dashboard Products');
 		$this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
 	}
 
