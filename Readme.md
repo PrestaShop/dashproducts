@@ -1,8 +1,8 @@
-# 
+# Dashproducts
 
 ## About
 
-
+Adds a block with a table of your latest orders and a ranking of your products.
 
 ## Contributing
 
