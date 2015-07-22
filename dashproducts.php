@@ -100,12 +100,12 @@ class DashProducts extends Module
 	public function getTableRecentOrders()
 	{
 		$header = array(
-            array('title' => $this->l('Customer Name'), 'class' => 'text-left'),
-            array('title' => $this->l('Products'), 'class' => 'text-center'),
-            array('title' => $this->l('Total').' '.$this->l('Tax excl.'), 'class' => 'text-center'),
-            array('title' => $this->l('Date'), 'class' => 'text-center'),
-            array('title' => $this->l('Status'), 'class' => 'text-center'),
-            array('title' => '', 'class' => 'text-right'),
+			array('title' => $this->l('Customer Name'), 'class' => 'text-left'),
+			array('title' => $this->l('Products'), 'class' => 'text-center'),
+			array('title' => $this->l('Total').' '.$this->l('Tax excl.'), 'class' => 'text-center'),
+			array('title' => $this->l('Date'), 'class' => 'text-center'),
+			array('title' => $this->l('Status'), 'class' => 'text-center'),
+			array('title' => '', 'class' => 'text-right'),
 		);
 
 		$limit = (int)Configuration::get('DASHPRODUCT_NBR_SHOW_LAST_ORDER') ? (int)Configuration::get('DASHPRODUCT_NBR_SHOW_LAST_ORDER') : 10;
@@ -116,11 +116,11 @@ class DashProducts extends Module
 		{
 			$currency = Currency::getCurrency((int)$order['id_currency']);
 			$tr = array();
-            $tr[] = array(
-                'id' => 'firstname_lastname',
-                'value' => '<a href="'.$this->context->link->getAdminLink('AdminCustomers', true).'&id_customer='.$order['id_customer'].'&viewcustomer">'.Tools::htmlentitiesUTF8($order['firstname']).' '.Tools::htmlentitiesUTF8($order['lastname']).'</a>',
-                'class' => 'text-left',
-            );
+			$tr[] = array(
+				'id' => 'firstname_lastname',
+				'value' => '<a href="'.$this->context->link->getAdminLink('AdminCustomers', true).'&id_customer='.$order['id_customer'].'&viewcustomer">'.Tools::htmlentitiesUTF8($order['firstname']).' '.Tools::htmlentitiesUTF8($order['lastname']).'</a>',
+				'class' => 'text-left',
+			);
 			$tr[] = array(
 				'id' => 'total_products',
 				'value' => count(OrderDetail::getList((int)$order['id_order'])),
@@ -138,11 +138,11 @@ class DashProducts extends Module
 				'value' => Tools::displayDate($order['date_add']),
 				'class' => 'text-center',
 			);
-            $tr[] = array(
-                'id' => 'status',
-                'value' => Tools::htmlentitiesUTF8($order['state_name']),
-                'class' => 'text-center',
-            );
+			$tr[] = array(
+				'id' => 'status',
+				'value' => Tools::htmlentitiesUTF8($order['state_name']),
+				'class' => 'text-center',
+			);
 			$tr[] = array(
 				'id' => 'details',
 				'value' => '',
