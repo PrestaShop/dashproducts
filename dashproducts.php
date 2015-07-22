@@ -196,16 +196,18 @@ class DashProducts extends Module
 			'
 					SELECT
 						product_id,
-						count(*) as total,
-						AVG(total_price_tax_excl / conversion_rate) as price,
+						product_name,
+						SUM(product_quantity) as total,
+						p.price as price,
 						SUM(total_price_tax_excl / conversion_rate) as sales,
 						SUM(product_quantity * purchase_supplier_price / conversion_rate) as expenses
 					FROM `'._DB_PREFIX_.'orders` o
 		LEFT JOIN `'._DB_PREFIX_.'order_detail` od ON o.id_order = od.id_order
+		LEFT JOIN `'._DB_PREFIX_.'product` p ON p.id_product = product_id
 		WHERE `invoice_date` BETWEEN "'.pSQL($date_from).' 00:00:00" AND "'.pSQL($date_to).' 23:59:59"
 		AND valid = 1
 		'.Shop::addSqlRestriction(false, 'o').'
-		GROUP BY product_id
+		GROUP BY product_id, product_attribute_id
 		ORDER BY total DESC
 		LIMIT '.(int)Configuration::get('DASHPRODUCT_NBR_SHOW_BEST_SELLER', 10)
 		);
@@ -234,7 +236,7 @@ class DashProducts extends Module
 				),
 				array(
 					'id' => 'product',
-					'value' => Tools::htmlentitiesUTF8($product_obj->name).'<br/>'.Tools::displayPrice($product['price']),
+					'value' => '<a href="'.$this->context->link->getAdminLink('AdminProducts', true).'&id_product='.$product_obj->id.'&updateproduct">'.Tools::htmlentitiesUTF8($product['product_name']).'</a>'.'<br/>'.Tools::displayPrice($product['price']),
 					'class' => 'text-center'
 				),
 				array(
