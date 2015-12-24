@@ -490,6 +490,7 @@ class DashProducts extends Module
 			'.Shop::addSqlRestriction(false, 'pv').'
 			AND dr.`time_start` BETWEEN "'.pSQL($date_from).'" AND "'.pSQL($date_to).'"
 			AND dr.`time_end` BETWEEN "'.pSQL($date_from).'" AND "'.pSQL($date_to).'"
+			ORDER BY pv.counter DESC
 			LIMIT '.(int)$limit);
 	}
 
