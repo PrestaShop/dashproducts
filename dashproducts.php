@@ -34,16 +34,16 @@ class dashproducts extends Module
     {
         $this->name = 'dashproducts';
         $this->tab = 'dashboard';
-        $this->version = '0.3.5';
+        $this->version = '1.0.0';
         $this->author = 'PrestaShop';
 
         $this->push_filename = _PS_CACHE_DIR_.'push/activity';
         $this->allow_push = true;
-        
+
         parent::__construct();
-        $this->displayName = $this->l('Dashboard Products');
-        $this->description = $this->l('Adds a block with a table of your latest orders and a ranking of your products');
-        $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
+        $this->displayName = $this->trans('Dashboard Products', array(), 'Modules.Dashproducts.Admin');
+        $this->description = $this->trans('Adds a block with a table of your latest orders and a ranking of your products', array(), 'Modules.Dashproducts.Admin');
+        $this->ps_versions_compliancy = array('min' => '1.7.0.0', 'max' => _PS_VERSION_);
     }
 
     public function install()
@@ -101,11 +101,11 @@ class dashproducts extends Module
     public function getTableRecentOrders()
     {
         $header = array(
-            array('title' => $this->l('Customer Name'), 'class' => 'text-left'),
-            array('title' => $this->l('Products'), 'class' => 'text-center'),
-            array('title' => $this->l('Total').' '.$this->l('Tax excl.'), 'class' => 'text-center'),
-            array('title' => $this->l('Date'), 'class' => 'text-center'),
-            array('title' => $this->l('Status'), 'class' => 'text-center'),
+            array('title' => $this->trans('Customer Name', array(), 'Modules.Dashproducts.Admin'), 'class' => 'text-left'),
+            array('title' => $this->trans('Products', array(), 'Admin.Global'), 'class' => 'text-center'),
+            array('title' => $this->trans('Total', array(), 'Admin.Global').' '.$this->trans('Tax excl.', array(), 'Admin.Global'), 'class' => 'text-center'),
+            array('title' => $this->trans('Date', array(), 'Admin.Global'), 'class' => 'text-center'),
+            array('title' => $this->trans('Status', array(), 'Admin.Global'), 'class' => 'text-center'),
             array('title' => '', 'class' => 'text-right'),
         );
 
@@ -147,7 +147,7 @@ class dashproducts extends Module
                 'id' => 'details',
                 'value' => '',
                 'class' => 'text-right',
-                'wrapper_start' => '<a class="btn btn-default" href="index.php?tab=AdminOrders&id_order='.(int)$order['id_order'].'&vieworder&token='.Tools::getAdminTokenLite('AdminOrders').'" title="'.$this->l('Details').'"><i class="icon-search"></i>',
+                'wrapper_start' => '<a class="btn btn-default" href="index.php?tab=AdminOrders&id_order='.(int)$order['id_order'].'&vieworder&token='.Tools::getAdminTokenLite('AdminOrders').'" title="'.$this->trans('Details', array(), 'Modules.Dashproducts.Admin').'"><i class="icon-search"></i>',
                 'wrapper_end' => '</a>'
             );
 
@@ -162,32 +162,32 @@ class dashproducts extends Module
         $header = array(
             array(
                 'id' => 'image',
-                'title' => $this->l('Image'),
+                'title' => $this->trans('Image', array(), 'Admin.Global'),
                 'class' => 'text-center',
             ),
             array(
                 'id' => 'product',
-                'title' => $this->l('Product'),
+                'title' => $this->trans('Product', array(), 'Admin.Global'),
                 'class' => 'text-center',
             ),
             array(
                 'id' => 'category',
-                'title' => $this->l('Category'),
+                'title' => $this->trans('Category', array(), 'Admin.Catalog.Feature'),
                 'class' => 'text-center',
             ),
             array(
                 'id' => 'total_sold',
-                'title' => $this->l('Total sold'),
+                'title' => $this->trans('Total sold', array(), 'Modules.Dashproducts.Admin'),
                 'class' => 'text-center',
             ),
             array(
                 'id' => 'sales',
-                'title' => $this->l('Sales'),
+                'title' => $this->trans('Sales', array(), 'Admin.Global'),
                 'class' => 'text-center',
             ),
             array(
                 'id' => 'net_profit',
-                'title' => $this->l('Net profit'),
+                'title' => $this->trans('Net profit', array(), 'Modules.Dashproducts.Admin'),
                 'class' => 'text-center',
             )
         );
@@ -228,7 +228,7 @@ class dashproducts extends Module
                 $path_to_image = _PS_PROD_IMG_DIR_.$image->getExistingImgPath().'.'.$this->context->controller->imageType;
                 $img = ImageManager::thumbnail($path_to_image, 'product_mini_'.$product_obj->id.'.'.$this->context->controller->imageType, 45, $this->context->controller->imageType);
             }
-            
+
             $productPrice = $product['price'];
             if (isset($product['price_attribute']) && $product['price_attribute'] != '0.000000') {
                 $productPrice = $product['price_attribute'];
@@ -276,32 +276,32 @@ class dashproducts extends Module
         $header = array(
             array(
                 'id' => 'image',
-                'title' => $this->l('Image'),
+                'title' => $this->trans('Image', array(), 'Admin.Global'),
                 'class' => 'text-center',
             ),
             array(
                 'id' => 'product',
-                'title' => $this->l('Product'),
+                'title' => $this->trans('Product', array(), 'Admin.Global'),
                 'class' => 'text-center',
             ),
             array(
                 'id' => 'views',
-                'title' => $this->l('Views'),
+                'title' => $this->trans('Views', array(), 'Modules.Dashproducts.Admin'),
                 'class' => 'text-center',
             ),
             array(
                 'id' => 'added_to_cart',
-                'title' => $this->l('Added to cart'),
+                'title' => $this->trans('Added to cart', array(), 'Modules.Dashproducts.Admin'),
                 'class' => 'text-center',
             ),
             array(
                 'id' => 'purchased',
-                'title' => $this->l('Purchased'),
+                'title' => $this->trans('Purchased', array(), 'Modules.Dashproducts.Admin'),
                 'class' => 'text-center',
             ),
             array(
                 'id' => 'rate',
-                'title' => $this->l('Percentage'),
+                'title' => $this->trans('Percentage', array(), 'Admin.Global'),
                 'class' => 'text-center',
             )
         );
@@ -360,7 +360,7 @@ class dashproducts extends Module
                 }
             }
         } else {
-            $body = '<div class="alert alert-info">'.$this->l('You must enable the "Save global page views" option from the "Data mining for statistics" module in order to display the most viewed products, or use the Google Analytics module.').'</div>';
+            $body = '<div class="alert alert-info">'.$this->trans('You must enable the "Save global page views" option from the "Data mining for statistics" module in order to display the most viewed products, or use the Google Analytics module.', array(), 'Modules.Dashproducts.Admin').'</div>';
         }
         return array('header' => $header, 'body' => $body);
     }
@@ -370,17 +370,17 @@ class dashproducts extends Module
         $header = array(
             array(
                 'id' => 'reference',
-                'title' => $this->l('Term'),
+                'title' => $this->trans('Term', array(), 'Modules.Dashproducts.Admin'),
                 'class' => 'text-left'
             ),
             array(
                 'id' => 'name',
-                'title' => $this->l('Search'),
+                'title' => $this->trans('Search', array(), 'Admin.Shopparameters.Feature'),
                 'class' => 'text-center'
             ),
             array(
                 'id' => 'totalQuantitySold',
-                'title' => $this->l('Results'),
+                'title' => $this->trans('Results', array(), 'Modules.Dashproducts.Admin'),
                 'class' => 'text-center'
             )
         );
@@ -417,7 +417,7 @@ class dashproducts extends Module
         $header = array(
             array(
                 'id' => 'reference',
-                'title' => $this->l('Product'),
+                'title' => $this->trans('Product', array(), 'Admin.Global'),
             )
         );
 
@@ -513,10 +513,10 @@ class dashproducts extends Module
             'form' => array(
                 'input' => array(),
                 'submit' => array(
-                    'title' => $this->l('   Save   '),
+                    'title' => $this->trans('Save', array(), 'Admin.Actions'),
                     'class' => 'btn btn-default pull-right submit_dash_config',
                     'reset' => array(
-                        'title' => $this->l('Cancel'),
+                        'title' => $this->trans('Cancel', array(), 'Admin.Actions'),
                         'class' => 'btn btn-default cancel_dash_config',
                     )
                 )
@@ -525,19 +525,19 @@ class dashproducts extends Module
 
         $inputs = array(
             array(
-                'label' => $this->l('Number of "Recent Orders" to display'),
+                'label' => $this->trans('Number of "Recent Orders" to display', array(), 'Modules.Dashproducts.Admin'),
                 'config_name' => 'DASHPRODUCT_NBR_SHOW_LAST_ORDER'
             ),
             array(
-                'label' => $this->l('Number of "Best Sellers" to display'),
+                'label' => $this->trans('Number of "Best Sellers" to display', array(), 'Modules.Dashproducts.Admin'),
                 'config_name' => 'DASHPRODUCT_NBR_SHOW_BEST_SELLER'
             ),
             array(
-                'label' => $this->l('Number of "Most Viewed" to display'),
+                'label' => $this->trans('Number of "Most Viewed" to display', array(), 'Modules.Dashproducts.Admin'),
                 'config_name' => 'DASHPRODUCT_NBR_SHOW_MOST_VIEWED'
             ),
             array(
-                'label' => $this->l('Number of "Top Searches" to display'),
+                'label' => $this->trans('Number of "Top Searches" to display', array(), 'Modules.Dashproducts.Admin'),
                 'config_name' => 'DASHPRODUCT_NBR_SHOW_TOP_SEARCH'
             ),
         );
@@ -593,7 +593,7 @@ class dashproducts extends Module
     {
         Tools::changeFileMTime($this->push_filename);
     }
-    
+
     public function hookActionSearch($params)
     {
         Tools::changeFileMTime($this->push_filename);
