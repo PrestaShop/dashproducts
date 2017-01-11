@@ -42,7 +42,7 @@ class DashProducts extends Module
 		parent::__construct();
 		$this->displayName = $this->l('Dashboard Products');
 		$this->description = $this->l('Adds a block with a table of your latest orders and a ranking of your products');
-		$this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
+		$this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.7.0.99');
 	}
 
 	public function install()
