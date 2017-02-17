@@ -27,17 +27,17 @@
 	<header class="panel-heading">
 		<i class="icon-bar-chart"></i> {l s='Products and Sales' d='Modules.Dashproducts.Admin'}
 		<span class="panel-heading-action">
-			<a class="list-toolbar-btn" href="#" onclick="toggleDashConfig('dashproducts'); return false;" title="{l s='Configure' d='Modules.Dashproducts.Admin'}">
+			<a class="list-toolbar-btn" href="#" onclick="toggleDashConfig('dashproducts'); return false;" title="{l s='Configure' d='Admin.Actions'}">
 				<i class="process-icon-configure"></i>
 			</a>
-			<a class="list-toolbar-btn" href="#"  onclick="refreshDashboard('dashproducts'); return false;"  title="{l s='Refresh' d='Modules.Dashproducts.Admin'}">
+			<a class="list-toolbar-btn" href="#"  onclick="refreshDashboard('dashproducts'); return false;"  title="{l s='Refresh' d='Admin.Actions'}">
 				<i class="process-icon-refresh"></i>
 			</a>
 		</span>
 	</header>
 
 	<section id="dashproducts_config" class="dash_config hide">
-		<header><i class="icon-wrench"></i> {l s='Configuration' d='Modules.Dashproducts.Admin'}</header>
+		<header><i class="icon-wrench"></i> {l s='Configuration' d='Admin.Global'}</header>
 		{$dashproducts_config_form}
 	</section>
 
