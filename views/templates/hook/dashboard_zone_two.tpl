@@ -95,7 +95,7 @@
 			</div>
 			<div class="tab-pane" id="dash_most_viewed">
 				<h3>
-					{l s="Most Viewed" d='Modules.Dashproducts.Admin'
+					{l s="Most Viewed" d='Modules.Dashproducts.Admin'}
 					<span>{l s="From" d='Modules.Dashproducts.Admin'} {$date_from} {l s="to" d='Modules.Dashproducts.Admin'} {$date_to}</span>
 				</h3>
 				<div class="table-responsive">
