@@ -197,7 +197,7 @@ class dashproducts extends Module
 					SELECT
 						product_id,
 						product_name,
-						SUM(product_quantity) as total,
+						SUM(product_quantity-product_quantity_refunded-product_quantity_return-product_quantity_reinjected) as total,
 						p.price as price,
 						pa.price as price_attribute,
 						SUM(total_price_tax_excl / conversion_rate) as sales,
@@ -206,12 +206,12 @@ class dashproducts extends Module
 		LEFT JOIN `'._DB_PREFIX_.'order_detail` od ON o.id_order = od.id_order
 		LEFT JOIN `'._DB_PREFIX_.'product` p ON p.id_product = product_id
 		LEFT JOIN `'._DB_PREFIX_.'product_attribute` pa ON pa.id_product_attribute = od.product_attribute_id
-		WHERE `invoice_date` BETWEEN "'.pSQL($date_from).' 00:00:00" AND "'.pSQL($date_to).' 23:59:59"
+		WHERE `invoice_date` BETWEEN "' . pSQL($date_from) . ' 00:00:00" AND "' . pSQL($date_to) . ' 23:59:59"
 		AND valid = 1
-		'.Shop::addSqlRestriction(false, 'o').'
+		' . Shop::addSqlRestriction(false, 'o') . '
 		GROUP BY product_id, product_attribute_id
 		ORDER BY total DESC
-		LIMIT '. ((Configuration::get('DASHPRODUCT_NBR_SHOW_BEST_SELLER')) ? (int)Configuration::get('DASHPRODUCT_NBR_SHOW_BEST_SELLER') : 10)
+		LIMIT ' . (int)Configuration::get('DASHPRODUCT_NBR_SHOW_BEST_SELLER')
         );
 
         $body = array();
