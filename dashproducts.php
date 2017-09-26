@@ -211,7 +211,7 @@ class dashproducts extends Module
 		'.Shop::addSqlRestriction(false, 'o').'
 		GROUP BY product_id, product_attribute_id
 		ORDER BY total DESC
-		LIMIT '.(int)Configuration::get('DASHPRODUCT_NBR_SHOW_BEST_SELLER', 10)
+		LIMIT '.(int)Configuration::get('DASHPRODUCT_NBR_SHOW_BEST_SELLER')
         );
 
         $body = array();
