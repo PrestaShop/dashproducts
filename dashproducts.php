@@ -320,7 +320,12 @@ class dashproducts extends Module
                     if (($row_image = Product::getCover($product_obj->id)) && $row_image['id_image']) {
                         $image = new Image($row_image['id_image']);
                         $path_to_image = _PS_PROD_IMG_DIR_.$image->getExistingImgPath().'.'.$this->context->controller->imageType;
-                        $img = ImageManager::thumbnail($path_to_image, 'product_mini_'.$product_obj->id.'.'.$this->context->controller->imageType, 45, $this->context->controller->imageType);
+                        $img = ImageManager::thumbnail(
+                            $path_to_image,
+                            'product_mini_'.$product_obj->id.'.'.$this->context->controller->imageType,
+                            45,
+                            $this->context->controller->imageType
+                        );
                     }
 
                     $tr = array();
@@ -467,7 +472,19 @@ class dashproducts extends Module
         if (Validate::isLoadedObject($gapi) && $gapi->isConfigured()) {
             $products = array();
             // Only works with the default product URL pattern at this time
-            if ($result = $gapi->requestReportData('ga:pagePath', 'ga:visits', $date_from, $date_to, '-ga:visits', 'ga:pagePath=~/([a-z]{2}/)?([a-z]+/)?[0-9][0-9]*\-.*\.html$', 1, 10)) {
+            $result = $gapi->requestReportData(
+                'ga:pagePath',
+                'ga:visits',
+                $date_from,
+                $date_to,
+                '-ga:visits',
+                'ga:pagePath=~/([a-z]{2}/)?([a-z]+/)?[0-9][0-9]*\-.*\.html$',
+                1,
+                10
+            );
+            
+            
+            if ($result) {
                 foreach ($result as $row) {
                     if (preg_match('@/([a-z]{2}/)?([a-z]+/)?([0-9]+)\-.*\.html$@', $row['dimensions']['pagePath'], $matches)) {
                         $products[] = array('id_object' => (int)$matches[3], 'counter' => $row['metrics']['visits']);
