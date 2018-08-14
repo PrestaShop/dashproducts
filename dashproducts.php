@@ -34,7 +34,7 @@ class dashproducts extends Module
     {
         $this->name = 'dashproducts';
         $this->tab = 'dashboard';
-        $this->version = '2.0.3';
+        $this->version = '2.0.4';
         $this->author = 'PrestaShop';
 
         $this->push_filename = _PS_CACHE_DIR_.'push/activity';
@@ -482,8 +482,8 @@ class dashproducts extends Module
                 1,
                 10
             );
-            
-            
+
+
             if ($result) {
                 foreach ($result as $row) {
                     if (preg_match('@/([a-z]{2}/)?([a-z]+/)?([0-9]+)\-.*\.html$@', $row['dimensions']['pagePath'], $matches)) {
