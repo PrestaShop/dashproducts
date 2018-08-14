@@ -1,5 +1,5 @@
 {*
-* 2007-2016 PrestaShop
+* 2007-2018 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,7 +18,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2016 PrestaShop SA
+*  @copyright  2007-2018 PrestaShop SA
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
@@ -84,7 +84,7 @@
 			<div class="tab-pane" id="dash_best_sellers">
 				<h3>
 					{l s='Top %d products' sprintf=$DASHPRODUCT_NBR_SHOW_BEST_SELLER|intval d='Modules.Dashproducts.Admin'}
-					<span>{l s="From" d='Modules.Dashproducts.Admin'} {$date_from} {l s="to" d='Modules.Dashproducts.Admin'} {$date_to}</span>
+					<span>{l s="From" d='Modules.Dashproducts.Admin'} {$date_from|escape:'htmlall':'UTF-8'} {l s="to" d='Modules.Dashproducts.Admin'} {$date_to|escape:'htmlall':'UTF-8'}</span>
 				</h3>
 				<div class="table-responsive">
 					<table class="table data_table" id="table_best_sellers">
@@ -96,7 +96,7 @@
 			<div class="tab-pane" id="dash_most_viewed">
 				<h3>
 					{l s="Most Viewed" d='Modules.Dashproducts.Admin'}
-					<span>{l s="From" d='Modules.Dashproducts.Admin'} {$date_from} {l s="to" d='Modules.Dashproducts.Admin'} {$date_to}</span>
+					<span>{l s="From" d='Modules.Dashproducts.Admin'} {$date_from|escape:'htmlall':'UTF-8'} {l s="to" d='Modules.Dashproducts.Admin'} {$date_to|escape:'htmlall':'UTF-8'}</span>
 				</h3>
 				<div class="table-responsive">
 					<table class="table data_table" id="table_most_viewed">
@@ -108,7 +108,7 @@
 			<div class="tab-pane" id="dash_top_search">
 				<h3>
 					{l s='Top %d most search terms' sprintf=$DASHPRODUCT_NBR_SHOW_TOP_SEARCH|intval d='Modules.Dashproducts.Admin'}
-					<span>{l s="From" d='Modules.Dashproducts.Admin'} {$date_from} {l s="to" d='Modules.Dashproducts.Admin'} {$date_to}</span>
+					<span>{l s="From" d='Modules.Dashproducts.Admin'} {$date_from|escape:'htmlall':'UTF-8'} {l s="to" d='Modules.Dashproducts.Admin'} {$date_to|escape:'htmlall':'UTF-8'}</span>
 				</h3>
 				<div class="table-responsive">
 					<table class="table data_table" id="table_top_10_most_search">
