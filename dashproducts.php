@@ -116,9 +116,10 @@ class dashproducts extends Module
         foreach ($orders as $order) {
             $currency = Currency::getCurrency((int)$order['id_currency']);
             $tr = array();
+            $customerLinkParams = ['route' => 'admin_customers_view', 'customerId' => $order['id_customer']];
             $tr[] = array(
                 'id' => 'firstname_lastname',
-                'value' => '<a href="'.$this->context->link->getAdminLink('AdminCustomers', true).'&id_customer='.$order['id_customer'].'&viewcustomer">'.Tools::htmlentitiesUTF8($order['firstname']).' '.Tools::htmlentitiesUTF8($order['lastname']).'</a>',
+                'value' => '<a href="'.$this->context->link->getAdminLink('AdminCustomers', true, $customerLinkParams) .'">'.Tools::htmlentitiesUTF8($order['firstname']).' '.Tools::htmlentitiesUTF8($order['lastname']).'</a>',
                 'class' => 'text-left',
             );
             $tr[] = array(
