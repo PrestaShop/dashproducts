@@ -243,7 +243,7 @@ class dashproducts extends Module
                 ),
                 array(
                     'id' => 'product',
-                    'value' => '<a href="'.$this->context->link->getAdminLink('AdminProducts', true).'&id_product='.$product_obj->id.'&updateproduct">'.Tools::htmlentitiesUTF8($product['product_name']).'</a>'.'<br/>'.Tools::displayPrice($productPrice),
+                    'value' => '<a href="'.$this->context->link->getAdminLink('AdminProducts', true, ['id_product' => $product_obj->id, 'updateproduct' => 1]).'">'.Tools::htmlentitiesUTF8($product['product_name']).'</a>'.'<br/>'.Tools::displayPrice($productPrice),
                     'class' => 'text-center'
                 ),
                 array(
