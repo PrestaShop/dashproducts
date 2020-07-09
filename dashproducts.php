@@ -34,7 +34,7 @@ class dashproducts extends Module
     {
         $this->name = 'dashproducts';
         $this->tab = 'dashboard';
-        $this->version = '2.0.4';
+        $this->version = '2.1.0';
         $this->author = 'PrestaShop';
 
         $this->push_filename = _PS_CACHE_DIR_.'push/activity';
@@ -72,7 +72,7 @@ class dashproducts extends Module
                 'DASHPRODUCT_NBR_SHOW_TOP_SEARCH' => Configuration::get('DASHPRODUCT_NBR_SHOW_TOP_SEARCH'),
                 'date_from' => Tools::displayDate($params['date_from']),
                 'date_to' => Tools::displayDate($params['date_to']),
-                'dashproducts_config_form' => $this->renderConfigForm(),
+                'dashproducts_config_form' => $this->getPermission('configure') ? $this->renderConfigForm() : null,
             )
         );
 
@@ -116,9 +116,10 @@ class dashproducts extends Module
         foreach ($orders as $order) {
             $currency = Currency::getCurrency((int)$order['id_currency']);
             $tr = array();
+            $customerLinkParams = ['route' => 'admin_customers_view', 'customerId' => $order['id_customer']];
             $tr[] = array(
                 'id' => 'firstname_lastname',
-                'value' => '<a href="'.$this->context->link->getAdminLink('AdminCustomers', true).'&id_customer='.$order['id_customer'].'&viewcustomer">'.Tools::htmlentitiesUTF8($order['firstname']).' '.Tools::htmlentitiesUTF8($order['lastname']).'</a>',
+                'value' => '<a href="'.$this->context->link->getAdminLink('AdminCustomers', true, $customerLinkParams) .'">'.Tools::htmlentitiesUTF8($order['firstname']).' '.Tools::htmlentitiesUTF8($order['lastname']).'</a>',
                 'class' => 'text-left',
             );
             $tr[] = array(
@@ -242,7 +243,7 @@ class dashproducts extends Module
                 ),
                 array(
                     'id' => 'product',
-                    'value' => '<a href="'.$this->context->link->getAdminLink('AdminProducts', true).'&id_product='.$product_obj->id.'&updateproduct">'.Tools::htmlentitiesUTF8($product['product_name']).'</a>'.'<br/>'.Tools::displayPrice($productPrice),
+                    'value' => '<a href="'.$this->context->link->getAdminLink('AdminProducts', true, ['id_product' => $product_obj->id, 'updateproduct' => 1]).'">'.Tools::htmlentitiesUTF8($product['product_name']).'</a>'.'<br/>'.Tools::displayPrice($productPrice),
                     'class' => 'text-center'
                 ),
                 array(
@@ -615,5 +616,45 @@ class dashproducts extends Module
     public function hookActionSearch($params)
     {
         Tools::changeFileMTime($this->push_filename);
+    }
+
+    /**
+     * Validate dashboard configuration
+     *
+     * @param array $config
+     *
+     * @return array
+     */
+    public function validateDashConfig(array $config)
+    {
+        $errors = [];
+        $possibleValues = [5, 10, 20, 50];
+        foreach (array_keys($this->getConfigFieldsValues()) as $fieldName) {
+            if (!isset($config[$fieldName]) || !in_array($config[$fieldName], $possibleValues)) {
+                $errors[$fieldName] = $this->trans('The %s field is invalid.', [$fieldName], 'Modules.Dashproducts.Admin');
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Save dashboard configuration
+     *
+     * @param array $config
+     *
+     * @return bool determines if there are errors or not
+     */
+    public function saveDashConfig(array $config)
+    {
+        if (!$this->getPermission('configure')) {
+            return true;
+        }
+
+        foreach (array_keys($this->getConfigFieldsValues()) as $fieldName) {
+            Configuration::updateValue($fieldName, (int) $config[$fieldName]);
+        }
+
+        return false;
     }
 }
