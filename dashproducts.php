@@ -34,7 +34,7 @@ class dashproducts extends Module
     {
         $this->name = 'dashproducts';
         $this->tab = 'dashboard';
-        $this->version = '2.1.0';
+        $this->version = '2.1.1';
         $this->author = 'PrestaShop';
 
         $this->push_filename = _PS_CACHE_DIR_.'push/activity';
@@ -631,7 +631,7 @@ class dashproducts extends Module
         $possibleValues = [5, 10, 20, 50];
         foreach (array_keys($this->getConfigFieldsValues()) as $fieldName) {
             if (!isset($config[$fieldName]) || !in_array($config[$fieldName], $possibleValues)) {
-                $errors[$fieldName] = $this->trans('The %s field is invalid.', [$fieldName], 'Modules.Dashproducts.Admin');
+                $errors[$fieldName] = $this->trans('The %s field is invalid.', [$fieldName], 'Admin.Notifications.Error');
             }
         }
 
