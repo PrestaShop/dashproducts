@@ -631,7 +631,7 @@ class dashproducts extends Module
         $possibleValues = [5, 10, 20, 50];
         foreach (array_keys($this->getConfigFieldsValues()) as $fieldName) {
             if (!isset($config[$fieldName]) || !in_array($config[$fieldName], $possibleValues)) {
-                $errors[$fieldName] = $this->trans('The %s field is invalid.', [$fieldName], 'Modules.Dashproducts.Admin');
+                $errors[$fieldName] = $this->trans('The %s field is invalid.', [$fieldName], 'Admin.Notifications.Error');
             }
         }
 
