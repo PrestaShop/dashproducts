@@ -24,6 +24,9 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
+use PrestaShop\Module\Dashproducts\Form\DashproductsConfigurationType;
+use Symfony\Component\HttpFoundation\Request;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -63,6 +66,20 @@ class dashproducts extends Module
 
     public function hookDashboardZoneTwo($params)
     {
+        if ($this->isSymfonyContext()) {
+            $configForm = $this->get('prestashop.module.dashproducts.form.dashproducts_configuration_form_data_handler')->getForm();
+            return $this->get('twig')->render('@Modules/dashproducts/views/dashboard_zone_two.html.twig', [
+                'DASHACTIVITY_CART_ACTIVE' => Configuration::get('DASHACTIVITY_CART_ACTIVE'),
+                'DASHACTIVITY_VISITOR_ONLINE' => Configuration::get('DASHACTIVITY_VISITOR_ONLINE'),
+                'DASHPRODUCT_NBR_SHOW_LAST_ORDER' => Configuration::get('DASHPRODUCT_NBR_SHOW_LAST_ORDER'),
+                'DASHPRODUCT_NBR_SHOW_BEST_SELLER' => Configuration::get('DASHPRODUCT_NBR_SHOW_BEST_SELLER'),
+                'DASHPRODUCT_NBR_SHOW_TOP_SEARCH' => Configuration::get('DASHPRODUCT_NBR_SHOW_TOP_SEARCH'),
+                'dateFrom' => Tools::displayDate($params['date_from']),
+                'dateTo' => Tools::displayDate($params['date_to']),
+                'dashproductsConfigForm' => $this->getPermission('configure') ? $configForm->createView() : null,
+            ]);
+        }
+
         $this->context->smarty->assign(
             array(
                 'DASHACTIVITY_CART_ACTIVE' => Configuration::get('DASHACTIVITY_CART_ACTIVE'),
@@ -114,6 +131,7 @@ class dashproducts extends Module
 
         $body = array();
         foreach ($orders as $order) {
+            $url = $this->context->link->getAdminLink('AdminOrders', true, [], ['orderId' => (int) $order['id_order'], 'action' => 'vieworder']);
             $currency = Currency::getCurrency((int)$order['id_currency']);
             $tr = array();
             $customerLinkParams = ['route' => 'admin_customers_view', 'customerId' => $order['id_customer']];
@@ -144,11 +162,18 @@ class dashproducts extends Module
                 'value' => Tools::htmlentitiesUTF8($order['state_name']),
                 'class' => 'text-center',
             );
+
+            if ($this->isSymfonyContext()) {
+                $icon = '<a class="btn tooltip-link" href="' . $url . '" title="' . $this->trans('Details', [], 'Modules.Dashproducts.Admin') . '"><i class="material-icons">search</i>';
+            } else {
+                $icon = '<a class="btn btn-default" href="' . $url . '" title="'.$this->trans('Details', array(), 'Modules.Dashproducts.Admin').'"><i class="icon-search"></i>';
+            }
+
             $tr[] = array(
                 'id' => 'details',
                 'value' => '',
                 'class' => 'text-right',
-                'wrapper_start' => '<a class="btn btn-default" href="index.php?tab=AdminOrders&id_order='.(int)$order['id_order'].'&vieworder&token='.Tools::getAdminTokenLite('AdminOrders').'" title="'.$this->trans('Details', array(), 'Modules.Dashproducts.Admin').'"><i class="icon-search"></i>',
+                'wrapper_start' => $icon,
                 'wrapper_end' => '</a>'
             );
 
@@ -656,5 +681,33 @@ class dashproducts extends Module
         }
 
         return false;
+    }
+
+    /**
+     * Handles dashproducts configuration update in modern dashboard.
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function handleDashConfigUpdate(Request $request): array
+    {
+        if (!$this->getPermission('configure')) {
+            return [$this->trans('You do not have permission to update this.', [], 'Admin.Notifications.Error')];
+        }
+
+        $formDataHandler = $this->get('prestashop.module.dashproducts.form.dashproducts_configuration_form_data_handler');
+        $form = $formDataHandler->getForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $errors = $formDataHandler->save($form->getData());
+
+            if (!empty($errors)) {
+                return $errors;
+            }
+        }
+
+        return [];
     }
 }
