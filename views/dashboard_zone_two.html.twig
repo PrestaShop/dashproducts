@@ -1,0 +1,212 @@
+{#**
+* Copyright since 2007 PrestaShop SA and Contributors
+* PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License version 3.0
+* that is bundled with this package in the file LICENSE.md.
+* It is also available through the world-wide-web at this URL:
+* https://opensource.org/licenses/AFL-3.0
+* If you did not receive a copy of the license and are unable to
+* obtain it through the world-wide-web, please send an email
+* to license@prestashop.com so we can send you a copy immediately.
+*
+* @author    PrestaShop SA and Contributors <contact@prestashop.com>
+* @copyright Since 2007 PrestaShop SA and Contributors
+* @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+*#}
+
+{% trans_default_domain 'Modules.Dashproducts.Admin' %}
+
+<section id="dashproducts" class="card">
+    <div class="card-header">
+        <div class="d-flex">
+            <div class="mr-auto">
+                <i class="material-icons">insert_chart_outlined</i>
+                {{ 'Products and Sales'|trans }}
+            </div>
+            <div>
+                {% if dashproductsConfigForm is not null %}
+                    <a href="#"
+                       title="{{ 'Configure'|trans({}, 'Admin.Actions') }}"
+                       onclick="return false;"
+                       class="text-decoration-none dash-config-btn"
+                    >
+                        <i class="material-icons">settings</i>
+                    </a>
+                {% endif %}
+                <a href="#"
+                   title="{{ 'Refresh'|trans({}, 'Admin.Actions') }}"
+                   class="text-decoration-none dash-refresh"
+                >
+                    <i class="material-icons">refresh</i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        {% if dashproductsConfigForm is not null %}
+            {{ form_start(dashproductsConfigForm) }}
+                <section id="dashproducts_config" class="dash_config d-none">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="material-icons">build</i>
+                            {{ 'Configuration'|trans({}, 'Admin.Global') }}
+                        </div>
+
+                        <div class="card-body">
+                            {{ form_widget(dashproductsConfigForm) }}
+                        </div>
+
+                        <div class="card-footer">
+                        	<div class="d-flex justify-content-end">
+                        	    <button class="btn btn-primary submit_dash_config float-right">
+                        	        {{ 'Save'|trans({}, 'Admin.Actions') }}
+                        	    </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            {{ form_end(dashproductsConfigForm) }}
+        {% endif %}
+
+        <section>
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active"
+                       href="#dash-recent-orders"
+                       id="dash-recent-orders-tab"
+                       data-toggle="pill"
+                       role="tab"
+                       aria-controls="dash_recent_orders"
+                       aria-expanded="true"
+                    >
+                        <i class="material-icons">local_fire_department</i>
+                        {{ 'Recent Orders'|trans }}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="#dash-best-seller"
+                       id="dash-best-seller-tab"
+                       data-toggle="pill"
+                       role="tab"
+                       aria-controls="dash_best_seller"
+                       aria-expanded="true"
+                    >
+                        <i class="material-icons">emoji_events</i>
+                        {{ 'Best Sellers'|trans }}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="#dash-most-viewed"
+                       id="dash-most-viewed-tab"
+                       data-toggle="pill"
+                       role="tab"
+                       aria-controls="dash_most_viewed"
+                       aria-expanded="true"
+                    >
+                        <i class="material-icons">visibility</i>
+                        {{ 'Most Viewed'|trans }}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="#dash-top-searches"
+                       id="dash-top-searches-tab"
+                       data-toggle="pill"
+                       role="tab"
+                       aria-controls="dash_top_searches"
+                       aria-expanded="true"
+                    >
+                        <i class="material-icons">search</i>
+                        {{ 'Top Searches'|trans }}
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active"
+                     id="dash-recent-orders"
+                     role="tabpanel"
+                     aria-labelledby="dash-recent-orders-tab"
+                >
+                    <div class="card">
+                        <div class="card-header">
+                            {{ 'Last %showLast% orders'|trans({'%showLast%': DASHPRODUCT_NBR_SHOW_LAST_ORDER|number_format}) }}
+                        </div>
+
+                        <div class="card-body">
+                            <table class="table data_table" id="table_recent_orders">
+                                <thead></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade show"
+                     id="dash-best-seller"
+                     role="tabpanel"
+                     aria-labelledby="dash-best-seller-tab"
+                >
+                    <div class="card">
+                        <div class="card-header">
+                            {{ 'Top %showTop% products'|trans({'%showTop%': DASHPRODUCT_NBR_SHOW_BEST_SELLER|number_format}) }}
+                        </div>
+
+                        <div class="card-body">
+                            <table class="table data_table" id="table_best_sellers">
+                                <thead></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade show"
+                     id="dash-most-viewed"
+                     role="tabpanel"
+                     aria-labelledby="dash-most-viewed-tab"
+                >
+                    <div class="card">
+                        <div class="card-header">
+                            {{ 'Most viewed'|trans }}
+                            <span>{{ 'From'|trans }} {{ dateFrom|escape }} {{ 'to'|trans }} {{ dateTo|escape }}</span>
+                        </div>
+
+                        <div class="card-body">
+                            <table class="table data_table" id="table_most_viewed">
+                                <thead></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade show"
+                     id="dash-top-searches"
+                     role="tabpanel"
+                     aria-labelledby="dash-top-searches-tab"
+                >
+                    <div class="card">
+                        <div class="card-header">
+                            {{ 'Top %showMost% most search terms'|trans({'%showMost%': DASHPRODUCT_NBR_SHOW_TOP_SEARCH|number_format}) }}
+                            <span>{{ 'From'|trans }} {{ dateFrom|escape }} {{ 'to'|trans }} {{ dateTo|escape }}</span>
+                        </div>
+
+                        <div class="card-body">
+                            <table class="table data_table" id="table_top_10_most_search">
+                                <thead></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</section>
