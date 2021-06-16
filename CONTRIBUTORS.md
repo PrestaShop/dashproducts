@@ -21,3 +21,4 @@ GitHub contributors:
  - mickaelandrieu
  - tchauviere
  - xBorderie
+ - ks129

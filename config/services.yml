@@ -1,0 +1,29 @@
+services:
+  _defaults:
+    public: true
+
+  prestashop.module.dashproducts.form.type.dashproducts_configuration:
+    class: 'PrestaShop\Module\Dashproducts\Form\DashproductsConfigurationType'
+    parent: 'form.type.translatable.aware'
+    public: true
+    tags:
+      - { name: form.type }
+
+  prestashop.module.dashproducts.form.dashproducts_configuration_data_configuration:
+    class: 'PrestaShop\Module\Dashproducts\Form\DashproductsConfigurationDataConfiguration'
+    arguments:
+      - '@prestashop.adapter.legacy.configuration'
+
+  prestashop.module.dashproducts.form.dashproducts_configuration_form_data_provider:
+    class: 'PrestaShop\Module\Dashproducts\Form\DashproductsConfigurationFormDataProvider'
+    arguments:
+      - '@prestashop.module.dashproducts.form.dashproducts_configuration_data_configuration'
+
+  prestashop.module.dashproducts.form.dashproducts_configuration_form_data_handler:
+    class: 'PrestaShop\PrestaShop\Core\Form\Handler'
+    arguments:
+      - '@form.factory'
+      - '@prestashop.core.hook.dispatcher'
+      - '@prestashop.module.dashproducts.form.dashproducts_configuration_form_data_provider'
+      - 'PrestaShop\Module\Dashproducts\Form\DashproductsConfigurationType'
+      - 'DashproductsConfiguration'

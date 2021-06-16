@@ -9,8 +9,13 @@
       "email": "contact@prestashop.com"
     }
   ],
+  "autoload": {
+    "psr-4": {
+      "PrestaShop\\Module\\Dashproducts\\": "src/"
+    }
+  },
   "require": {
-    "php": ">=5.4"
+    "php": ">=7.1"
   },
   "config": {
     "preferred-install": "dist"
