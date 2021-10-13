@@ -77,7 +77,9 @@
 
     <div class="tab-content panel">
       <div class="tab-pane active" id="dash_recent_orders">
-        <h3>{l s='Last %d orders' sprintf=$DASHPRODUCT_NBR_SHOW_LAST_ORDER|intval d='Modules.Dashproducts.Admin'}</h3>
+        <div class="panel-heading">
+          {l s='Last %d orders' sprintf=$DASHPRODUCT_NBR_SHOW_LAST_ORDER|intval d='Modules.Dashproducts.Admin'}
+        </div>
         <div class="table-responsive">
           <table class="table data_table" id="table_recent_orders">
             <thead></thead>
