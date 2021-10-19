@@ -136,7 +136,7 @@ class dashproducts extends Module
             );
             $tr[] = array(
                 'id' => 'total_paid',
-                'value' => Tools::displayPrice((float)$order['total_paid_tax_excl'], $currency),
+                'value' => $this->context->getCurrentLocale()->formatPrice((float)$order['total_paid_tax_excl'], $currency->iso_code),
                 'class' => 'text-center',
                 'wrapper_start' => $order['valid'] ? '<span class="badge badge-success">' : '',
                 'wrapper_end' => '<span>',
@@ -250,7 +250,8 @@ class dashproducts extends Module
                 ),
                 array(
                     'id' => 'product',
-                    'value' => '<a href="'.$this->context->link->getAdminLink('AdminProducts', true, ['id_product' => $product_obj->id, 'updateproduct' => 1]).'">'.Tools::htmlentitiesUTF8($product['product_name']).'</a>'.'<br/>'.Tools::displayPrice($productPrice),
+                    'value' => '<a href="'.$this->context->link->getAdminLink('AdminProducts', true, ['id_product' => $product_obj->id, 'updateproduct' => 1]).'">'.Tools::htmlentitiesUTF8($product['product_name']).'</a>'.'<br/>' . 
+			$this->context->getCurrentLocale()->formatPrice($productPrice, $this->context->currency->iso_code),
                     'class' => 'text-center'
                 ),
                 array(
@@ -265,12 +266,12 @@ class dashproducts extends Module
                 ),
                 array(
                     'id' => 'sales',
-                    'value' => Tools::displayPrice($product['sales']),
+                    'value' => $this->context->getCurrentLocale()->formatPrice($product['sales'], $this->context->currency->iso_code),
                     'class' => 'text-center'
                 ),
                 array(
                     'id' => 'net_profit',
-                    'value' => Tools::displayPrice($product['sales'] - $product['expenses']),
+                    'value' => $this->context->getCurrentLocale()->formatPrice(($product['sales'] - $product['expenses']), $this->context->currency->iso_code),
                     'class' => 'text-center'
                 )
             );
@@ -344,7 +345,7 @@ class dashproducts extends Module
                     );
                     $tr[] = array(
                         'id' => 'product',
-                        'value' => Tools::htmlentitiesUTF8($product_obj->name).'<br/>'.Tools::displayPrice(Product::getPriceStatic((int)$product_obj->id)),
+                        'value' => Tools::htmlentitiesUTF8($product_obj->name).'<br/>'. $this->context->getCurrentLocale()->formatPrice(Product::getPriceStatic((int)$product_obj->id), $this->context->currency->iso_code),
                         'class' => 'text-center',
                     );
                     $tr[] = array(
