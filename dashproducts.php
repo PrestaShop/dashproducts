@@ -37,9 +37,6 @@ class dashproducts extends Module
         $this->version = '2.1.1';
         $this->author = 'PrestaShop';
 
-        $this->push_filename = _PS_CACHE_DIR_.'push/activity';
-        $this->allow_push = true;
-
         parent::__construct();
         $this->displayName = $this->trans('Dashboard Products', array(), 'Modules.Dashproducts.Admin');
         $this->description = $this->trans('Enrich your stats, display a table of your latest orders and a ranking of your products.', array(), 'Modules.Dashproducts.Admin');
@@ -56,8 +53,6 @@ class dashproducts extends Module
         return (parent::install()
             && $this->registerHook('dashboardZoneTwo')
             && $this->registerHook('dashboardData')
-            && $this->registerHook('actionObjectOrderAddAfter')
-            && $this->registerHook('actionSearch')
         );
     }
 
@@ -614,16 +609,6 @@ class dashproducts extends Module
             'DASHPRODUCT_NBR_SHOW_MOST_VIEWED' => Configuration::get('DASHPRODUCT_NBR_SHOW_MOST_VIEWED'),
             'DASHPRODUCT_NBR_SHOW_TOP_SEARCH' => Configuration::get('DASHPRODUCT_NBR_SHOW_TOP_SEARCH'),
         );
-    }
-
-    public function hookActionObjectOrderAddAfter($params)
-    {
-        Tools::changeFileMTime($this->push_filename);
-    }
-
-    public function hookActionSearch($params)
-    {
-        Tools::changeFileMTime($this->push_filename);
     }
 
     /**
