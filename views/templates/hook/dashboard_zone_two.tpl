@@ -23,7 +23,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-<section id="dashproducts" class="panel widget {if $allow_push} allow_push{/if}">
+<section id="dashproducts" class="panel widget">
   <header class="panel-heading">
     <i class="icon-bar-chart"></i> {l s='Products and Sales' d='Modules.Dashproducts.Admin'}
     <span class="panel-heading-action">
