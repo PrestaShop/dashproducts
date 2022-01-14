@@ -33,7 +33,7 @@ class dashproducts extends Module
     public function __construct()
     {
         $this->name = 'dashproducts';
-        $this->tab = 'dashboard';
+        $this->tab = 'administration';
         $this->version = '2.1.2';
         $this->author = 'PrestaShop';
 
