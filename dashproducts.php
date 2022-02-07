@@ -80,14 +80,12 @@ class dashproducts extends Module
         $table_most_viewed = $this->getTableMostViewed($params['date_from'], $params['date_to']);
         $table_top_10_most_search = $this->getTableTop10MostSearch($params['date_from'], $params['date_to']);
 
-        //$table_top_5_search = $this->getTableTop5Search();
         return [
             'data_table' => [
                 'table_recent_orders' => $table_recent_orders,
                 'table_best_sellers' => $table_best_sellers,
                 'table_most_viewed' => $table_most_viewed,
                 'table_top_10_most_search' => $table_top_10_most_search,
-                //'table_top_5_search' => $table_top_5_search
             ],
         ];
     }
@@ -108,6 +106,7 @@ class dashproducts extends Module
 
         $body = [];
         foreach ($orders as $order) {
+            /** @var array $currency */
             $currency = Currency::getCurrency((int) $order['id_currency']);
             $tr = [];
             $tr[] = [
@@ -130,7 +129,7 @@ class dashproducts extends Module
             ];
             $tr[] = [
                 'id' => 'total_paid',
-                'value' => $this->context->getCurrentLocale()->formatPrice((float) $order['total_paid_tax_excl'], $currency->iso_code),
+                'value' => $this->context->getCurrentLocale()->formatPrice((float) $order['total_paid_tax_excl'], $currency['iso_code']),
                 'class' => 'text-center',
                 'wrapper_start' => $order['valid'] ? '<span class="badge badge-success">' : '',
                 'wrapper_end' => '<span>',
@@ -222,11 +221,11 @@ class dashproducts extends Module
             if (!Validate::isLoadedObject($product_obj)) {
                 continue;
             }
-            $category = new Category($product_obj->getDefaultCategory(), $this->context->language->id);
+            $category = new Category($product_obj->getDefaultCategory()['id_category_default'], $this->context->language->id);
 
             $img = '';
             if (($row_image = Product::getCover($product_obj->id)) && $row_image['id_image']) {
-                $image = new Image($row_image['id_image']);
+                $image = new Image((int) $row_image['id_image']);
                 $path_to_image = _PS_PROD_IMG_DIR_ . $image->getExistingImgPath() . '.' . $this->context->controller->imageType;
                 $img = ImageManager::thumbnail($path_to_image, 'product_mini_' . $row_image['id_image'] . '.' . $this->context->controller->imageType, 45, $this->context->controller->imageType);
             }
@@ -321,7 +320,7 @@ class dashproducts extends Module
 
                     $img = '';
                     if (($row_image = Product::getCover($product_obj->id)) && $row_image['id_image']) {
-                        $image = new Image($row_image['id_image']);
+                        $image = new Image((int) $row_image['id_image']);
                         $path_to_image = _PS_PROD_IMG_DIR_ . $image->getExistingImgPath() . '.' . $this->context->controller->imageType;
                         $img = ImageManager::thumbnail(
                             $path_to_image,
@@ -421,20 +420,6 @@ class dashproducts extends Module
         return ['header' => $header, 'body' => $body];
     }
 
-    public function getTableTop5Search()
-    {
-        $header = [
-            [
-                'id' => 'reference',
-                'title' => $this->trans('Product', [], 'Admin.Global'),
-            ],
-        ];
-
-        $body = [];
-
-        return ['header' => $header, 'body' => $body];
-    }
-
     public function getTotalProductSales($date_from, $date_to, $id_product)
     {
         $sql = 'SELECT SUM(od.`product_quantity` * od.`product_price`) AS total
@@ -445,12 +430,12 @@ class dashproducts extends Module
 					AND o.valid = 1
 					AND o.`date_add` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . '"';
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+        return (int) Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getValue($sql);
     }
 
     public function getTotalProductAddedCart($date_from, $date_to, $id_product)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
+        return Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getValue('
 		SELECT count(`id_product`) as count
 		FROM `' . _DB_PREFIX_ . 'cart_product` cp
 		WHERE cp.`id_product` = ' . (int) $id_product . '
@@ -460,7 +445,7 @@ class dashproducts extends Module
 
     public function getTotalProductPurchased($date_from, $date_to, $id_product)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
+        return Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getValue('
 		SELECT count(`product_id`) as count
 		FROM `' . _DB_PREFIX_ . 'order_detail` od
 		JOIN `' . _DB_PREFIX_ . 'orders` o ON o.`id_order` = od.`id_order`
@@ -472,44 +457,18 @@ class dashproducts extends Module
 
     public function getTotalViewed($date_from, $date_to, $limit = 10)
     {
-        $gapi = Module::isInstalled('gapi') ? Module::getInstanceByName('gapi') : false;
-        if (Validate::isLoadedObject($gapi) && $gapi->isConfigured()) {
-            $products = [];
-            // Only works with the default product URL pattern at this time
-            $result = $gapi->requestReportData(
-                'ga:pagePath',
-                'ga:visits',
-                $date_from,
-                $date_to,
-                '-ga:visits',
-                'ga:pagePath=~/([a-z]{2}/)?([a-z]+/)?[0-9][0-9]*\-.*\.html$',
-                1,
-                10
-            );
-
-            if ($result) {
-                foreach ($result as $row) {
-                    if (preg_match('@/([a-z]{2}/)?([a-z]+/)?([0-9]+)\-.*\.html$@', $row['dimensions']['pagePath'], $matches)) {
-                        $products[] = ['id_object' => (int) $matches[3], 'counter' => $row['metrics']['visits']];
-                    }
-                }
-            }
-
-            return $products;
-        } else {
-            return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
-			SELECT p.id_object, pv.counter
-			FROM `' . _DB_PREFIX_ . 'page_viewed` pv
-			LEFT JOIN `' . _DB_PREFIX_ . 'date_range` dr ON pv.`id_date_range` = dr.`id_date_range`
-			LEFT JOIN `' . _DB_PREFIX_ . 'page` p ON pv.`id_page` = p.`id_page`
-			LEFT JOIN `' . _DB_PREFIX_ . 'page_type` pt ON pt.`id_page_type` = p.`id_page_type`
-			WHERE pt.`name` = \'product\'
-			' . Shop::addSqlRestriction(false, 'pv') . '
-			AND dr.`time_start` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . '"
-			AND dr.`time_end` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . '"
-			ORDER BY pv.counter DESC
-			LIMIT ' . (int) $limit);
-        }
+        return Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS('
+        SELECT p.id_object, pv.counter
+        FROM `' . _DB_PREFIX_ . 'page_viewed` pv
+        LEFT JOIN `' . _DB_PREFIX_ . 'date_range` dr ON pv.`id_date_range` = dr.`id_date_range`
+        LEFT JOIN `' . _DB_PREFIX_ . 'page` p ON pv.`id_page` = p.`id_page`
+        LEFT JOIN `' . _DB_PREFIX_ . 'page_type` pt ON pt.`id_page_type` = p.`id_page_type`
+        WHERE pt.`name` = \'product\'
+        ' . Shop::addSqlRestriction(false, 'pv') . '
+        AND dr.`time_start` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . '"
+        AND dr.`time_end` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . '"
+        ORDER BY pv.counter DESC
+        LIMIT ' . (int) $limit);
     }
 
     public function getMostSearchTerms($date_from, $date_to, $limit = 10)
@@ -518,7 +477,7 @@ class dashproducts extends Module
             return [];
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
+        return Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS('
 		SELECT `keywords`, count(`id_statssearch`) as count_keywords, `results`
 		FROM `' . _DB_PREFIX_ . 'statssearch` ss
 		WHERE ss.`date_add` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . '"
@@ -587,7 +546,6 @@ class dashproducts extends Module
         $lang = new Language((int) Configuration::get('PS_LANG_DEFAULT'));
         $helper->default_form_language = $lang->id;
         $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
-        $this->fields_form = [];
         $helper->id = (int) Tools::getValue('id_carrier');
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitDashConfig';
