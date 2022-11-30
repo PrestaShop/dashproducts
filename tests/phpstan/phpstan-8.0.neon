@@ -1,0 +1,3 @@
+includes:
+	- %currentWorkingDirectory%/tests/phpstan/phpstan.neon
+
