@@ -7,3 +7,4 @@ parameters:
     - '#Parameter \#1 \$share of static method ShopCore::addSqlRestriction\(\) expects int, false given.#'
     - '#Parameter \#1 \$share of static method ShopCore::addSqlRestriction\(\) expects int, string given.#'
     - '#Parameter \#1 \$variable of method ModuleCore::getPermission\(\) expects array, string given.#'
+    - '#Parameter \#1 \$idCategory of class Category constructor expects null, int given#'
