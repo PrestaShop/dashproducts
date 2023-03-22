@@ -33,12 +33,12 @@ class dashproducts extends Module
     {
         $this->name = 'dashproducts';
         $this->tab = 'administration';
-        $this->version = '2.1.2';
+        $this->version = '2.1.3';
         $this->author = 'PrestaShop';
 
         parent::__construct();
         $this->displayName = $this->trans('Dashboard Products', [], 'Modules.Dashproducts.Admin');
-        $this->description = $this->trans('Enrich your stats, display a table of your latest orders and a ranking of your products.', [], 'Modules.Dashproducts.Admin');
+        $this->description = $this->trans('Enrich your stats: display a table of your latest orders and a ranking of your products.', [], 'Modules.Dashproducts.Admin');
         $this->ps_versions_compliancy = ['min' => '1.7.6.0', 'max' => _PS_VERSION_];
     }
 
