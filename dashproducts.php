@@ -222,7 +222,7 @@ class dashproducts extends Module
                 continue;
             }
             $default_category = $product_obj->getDefaultCategory();
-            $default_category_id = (int)(is_array($default_category) ?
+            $default_category_id = (int) (is_array($default_category) ?
                 $default_category['id_category_default'] : $default_category);
             $category = new Category($default_category_id, $this->context->language->id);
 
