@@ -221,7 +221,12 @@ class dashproducts extends Module
             if (!Validate::isLoadedObject($product_obj)) {
                 continue;
             }
-            $category = new Category($product_obj->getDefaultCategory()['id_category_default'], $this->context->language->id);
+
+            $productCategoryId = $product_obj->getDefaultCategory();
+            if (is_array($productCategoryId) && isset($productCategoryId['id_category_default'])) {
+                $productCategoryId = $productCategoryId['id_category_default'];
+            }
+            $category = new Category($productCategoryId, $this->context->language->id);
 
             $img = '';
             if (($row_image = Product::getCover($product_obj->id)) && $row_image['id_image']) {
