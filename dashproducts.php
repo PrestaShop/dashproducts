@@ -33,7 +33,7 @@ class dashproducts extends Module
     {
         $this->name = 'dashproducts';
         $this->tab = 'administration';
-        $this->version = '2.1.3';
+        $this->version = '2.1.4';
         $this->author = 'PrestaShop';
 
         parent::__construct();
@@ -148,7 +148,7 @@ class dashproducts extends Module
                 'id' => 'details',
                 'value' => '',
                 'class' => 'text-right',
-                'wrapper_start' => '<a class="btn btn-default" href="index.php?tab=AdminOrders&id_order=' . (int) $order['id_order'] . '&vieworder&token=' . Tools::getAdminTokenLite('AdminOrders') . '" title="' . $this->trans('Details', [], 'Modules.Dashproducts.Admin') . '"><i class="icon-search"></i>',
+                'wrapper_start' => '<a class="btn btn-default" href="index.php?controller=AdminOrders&id_order=' . (int) $order['id_order'] . '&vieworder&token=' . Tools::getAdminTokenLite('AdminOrders') . '" title="' . $this->trans('Details', [], 'Modules.Dashproducts.Admin') . '"><i class="icon-search"></i>',
                 'wrapper_end' => '</a>',
             ];
 
@@ -221,12 +221,17 @@ class dashproducts extends Module
             if (!Validate::isLoadedObject($product_obj)) {
                 continue;
             }
-            $category = new Category($product_obj->getDefaultCategory()['id_category_default'], $this->context->language->id);
+
+            $productCategoryId = $product_obj->getDefaultCategory();
+            if (is_array($productCategoryId) && isset($productCategoryId['id_category_default'])) {
+                $productCategoryId = $productCategoryId['id_category_default'];
+            }
+            $category = new Category($productCategoryId, $this->context->language->id);
 
             $img = '';
             if (($row_image = Product::getCover($product_obj->id)) && $row_image['id_image']) {
                 $image = new Image((int) $row_image['id_image']);
-                $path_to_image = _PS_PROD_IMG_DIR_ . $image->getExistingImgPath() . '.' . $this->context->controller->imageType;
+                $path_to_image = (defined('_PS_PRODUCT_IMG_DIR_') ? _PS_PRODUCT_IMG_DIR_ : _PS_PROD_IMG_DIR_) . $image->getExistingImgPath() . '.' . $this->context->controller->imageType;
                 $img = ImageManager::thumbnail($path_to_image, 'product_mini_' . $row_image['id_image'] . '.' . $this->context->controller->imageType, 45, $this->context->controller->imageType);
             }
 
@@ -321,7 +326,7 @@ class dashproducts extends Module
                     $img = '';
                     if (($row_image = Product::getCover($product_obj->id)) && $row_image['id_image']) {
                         $image = new Image((int) $row_image['id_image']);
-                        $path_to_image = _PS_PROD_IMG_DIR_ . $image->getExistingImgPath() . '.' . $this->context->controller->imageType;
+                        $path_to_image = (defined('_PS_PRODUCT_IMG_DIR_') ? _PS_PRODUCT_IMG_DIR_ : _PS_PROD_IMG_DIR_) . $image->getExistingImgPath() . '.' . $this->context->controller->imageType;
                         $img = ImageManager::thumbnail(
                             $path_to_image,
                             'product_mini_' . $product_obj->id . '.' . $this->context->controller->imageType,
