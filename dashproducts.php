@@ -119,7 +119,7 @@ class dashproducts extends Module
                     ]),
                     Tools::htmlentitiesUTF8($order['firstname']),
                     Tools::htmlentitiesUTF8($order['lastname'])
-                ) : '',
+                ) : $this->trans('Deleted customer', [], 'AdminGlobal'),
                 'class' => 'text-left',
             ];
             $tr[] = [
