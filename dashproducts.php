@@ -198,7 +198,7 @@ class dashproducts extends Module
 					SELECT
 						product_id,
 						product_name,
-						SUM(product_quantity-product_quantity_refunded-product_quantity_return-product_quantity_reinjected) as total,
+						SUM(product_quantity-product_quantity_refunded-product_quantity_return) as total,
 						p.price as price,
 						pa.price as price_attribute,
 						SUM(total_price_tax_excl / conversion_rate) as sales,
