@@ -471,7 +471,7 @@ class dashproducts extends Module
         WHERE pt.`name` = \'product\'
         ' . Shop::addSqlRestriction(false, 'pv') . '
         AND dr.`time_start` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . '"
-        AND dr.`time_end` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . '"
+        AND dr.`time_end` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . ' 23:59:59"
         ORDER BY pv.counter DESC
         LIMIT ' . (int) $limit);
     }
@@ -485,7 +485,7 @@ class dashproducts extends Module
         return Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS('
 		SELECT `keywords`, count(`id_statssearch`) as count_keywords, `results`
 		FROM `' . _DB_PREFIX_ . 'statssearch` ss
-		WHERE ss.`date_add` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . '"
+		WHERE ss.`date_add` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . ' 23:59:59"
 		' . Shop::addSqlRestriction(false, 'ss') . '
 		GROUP BY ss.`keywords`
 		ORDER BY `count_keywords` DESC
