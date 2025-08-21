@@ -193,86 +193,88 @@ class dashproducts extends Module
             ],
         ];
 
-        $products = Db::getInstance()->ExecuteS(
+        $products = Db::getInstance()->executeS(
             '
 					SELECT
-						product_id,
-						product_name,
-						SUM(product_quantity-product_quantity_refunded-product_quantity_return-product_quantity_reinjected) as total,
-						p.price as price,
-						pa.price as price_attribute,
-						SUM(total_price_tax_excl / conversion_rate) as sales,
-						SUM(product_quantity * purchase_supplier_price / conversion_rate) as expenses
+						`product_id`,
+						`product_name`,
+						SUM(`product_quantity`-`product_quantity_refunded`-`product_quantity_return`-`product_quantity_reinjected`) as total,
+						p.`price` as price,
+						pa.`price` as price_attribute,
+						SUM(`total_price_tax_excl` / `conversion_rate`) as sales,
+						SUM(`product_quantity` * `purchase_supplier_price` / `conversion_rate`) as expenses
 					FROM `' . _DB_PREFIX_ . 'orders` o
-		LEFT JOIN `' . _DB_PREFIX_ . 'order_detail` od ON o.id_order = od.id_order
-		LEFT JOIN `' . _DB_PREFIX_ . 'product` p ON p.id_product = product_id
-		LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute` pa ON pa.id_product_attribute = od.product_attribute_id
+		LEFT JOIN `' . _DB_PREFIX_ . 'order_detail` od ON o.`id_order` = od.`id_order`
+		LEFT JOIN `' . _DB_PREFIX_ . 'product` p ON p.`id_product` = `product_id`
+		LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute` pa ON pa.`id_product_attribute` = od.`product_attribute_id`
 		WHERE `invoice_date` BETWEEN "' . pSQL($date_from) . ' 00:00:00" AND "' . pSQL($date_to) . ' 23:59:59"
-		AND valid = 1
+		AND `valid` = 1
 		' . Shop::addSqlRestriction(false, 'o') . '
-		GROUP BY product_id, product_attribute_id
-		ORDER BY total DESC
+		GROUP BY `product_id`, `product_attribute_id`
+		ORDER BY `total` DESC
 		LIMIT ' . (int) Configuration::get('DASHPRODUCT_NBR_SHOW_BEST_SELLER')
         );
 
         $body = [];
-        foreach ($products as $product) {
-            $product_obj = new Product((int) $product['product_id'], false, $this->context->language->id);
-            if (!Validate::isLoadedObject($product_obj)) {
-                continue;
-            }
+        if (!empty($products)) {
+            foreach ($products as $product) {
+                $product_obj = new Product((int) $product['product_id'], false, $this->context->language->id);
+                if (!Validate::isLoadedObject($product_obj)) {
+                    continue;
+                }
 
-            $productCategoryId = $product_obj->getDefaultCategory();
-            if (is_array($productCategoryId) && isset($productCategoryId['id_category_default'])) {
-                $productCategoryId = $productCategoryId['id_category_default'];
-            }
-            $category = new Category($productCategoryId, $this->context->language->id);
+                $productCategoryId = $product_obj->getDefaultCategory();
+                if (is_array($productCategoryId) && isset($productCategoryId['id_category_default'])) {
+                    $productCategoryId = $productCategoryId['id_category_default'];
+                }
+                $category = new Category($productCategoryId, $this->context->language->id);
 
-            $img = '';
-            if (($row_image = Product::getCover($product_obj->id)) && $row_image['id_image']) {
-                $image = new Image((int) $row_image['id_image']);
-                $path_to_image = (defined('_PS_PRODUCT_IMG_DIR_') ? _PS_PRODUCT_IMG_DIR_ : _PS_PROD_IMG_DIR_) . $image->getExistingImgPath() . '.' . $this->context->controller->imageType;
-                $img = ImageManager::thumbnail($path_to_image, 'product_mini_' . $row_image['id_image'] . '.' . $this->context->controller->imageType, 45, $this->context->controller->imageType);
-            }
+                $img = '';
+                if (($row_image = Product::getCover($product_obj->id)) && $row_image['id_image']) {
+                    $image = new Image((int) $row_image['id_image']);
+                    $path_to_image = (defined('_PS_PRODUCT_IMG_DIR_') ? _PS_PRODUCT_IMG_DIR_ : _PS_PROD_IMG_DIR_) . $image->getExistingImgPath() . '.' . $this->context->controller->imageType;
+                    $img = ImageManager::thumbnail($path_to_image, 'product_mini_' . $row_image['id_image'] . '.' . $this->context->controller->imageType, 45, $this->context->controller->imageType);
+                }
 
-            $productPrice = $product['price'];
-            if (isset($product['price_attribute']) && $product['price_attribute'] != '0.000000') {
-                $productPrice = $product['price_attribute'];
-            }
+                $productPrice = $product['price'];
+                if (isset($product['price_attribute']) && $product['price_attribute'] != '0.000000') {
+                    $productPrice = $product['price_attribute'];
+                }
 
-            $body[] = [
-                [
-                    'id' => 'product',
-                    'value' => $img,
-                    'class' => 'text-center',
-                ],
-                [
-                    'id' => 'product',
-                    'value' => '<a href="' . $this->context->link->getAdminLink('AdminProducts', true, ['id_product' => $product_obj->id, 'updateproduct' => 1]) . '">' . Tools::htmlentitiesUTF8($product['product_name']) . '</a>' . '<br/>' .
-            $this->context->getCurrentLocale()->formatPrice($productPrice, $this->context->currency->iso_code),
-                    'class' => 'text-center',
-                ],
-                [
-                    'id' => 'category',
-                    'value' => $category->name,
-                    'class' => 'text-center',
-                ],
-                [
-                    'id' => 'total_sold',
-                    'value' => $product['total'],
-                    'class' => 'text-center',
-                ],
-                [
-                    'id' => 'sales',
-                    'value' => $this->context->getCurrentLocale()->formatPrice($product['sales'], $this->context->currency->iso_code),
-                    'class' => 'text-center',
-                ],
-                [
-                    'id' => 'net_profit',
-                    'value' => $this->context->getCurrentLocale()->formatPrice(($product['sales'] - $product['expenses']), $this->context->currency->iso_code),
-                    'class' => 'text-center',
-                ],
-            ];
+                $body[] = [
+                    [
+                        'id' => 'product',
+                        'value' => $img,
+                        'class' => 'text-center',
+                    ],
+                    [
+                        'id' => 'product',
+                        'value' => '<a href="' . $this->context->link->getAdminLink('AdminProducts', true, ['id_product' => $product_obj->id, 'updateproduct' => 1]) . '">' . Tools::htmlentitiesUTF8($product['product_name']) . '</a>' . '<br/>' .
+                            $this->context->getCurrentLocale()->formatPrice($productPrice, $this->context->currency->iso_code),
+                        'class' => 'text-center',
+                    ],
+                    [
+                        'id' => 'category',
+                        'value' => $category->name,
+                        'class' => 'text-center',
+                    ],
+                    [
+                        'id' => 'total_sold',
+                        'value' => $product['total'],
+                        'class' => 'text-center',
+                    ],
+                    [
+                        'id' => 'sales',
+                        'value' => $this->context->getCurrentLocale()->formatPrice($product['sales'], $this->context->currency->iso_code),
+                        'class' => 'text-center',
+                    ],
+                    [
+                        'id' => 'net_profit',
+                        'value' => $this->context->getCurrentLocale()->formatPrice(($product['sales'] - $product['expenses']), $this->context->currency->iso_code),
+                        'class' => 'text-center',
+                    ],
+                ];
+            }
         }
 
         return ['header' => $header, 'body' => $body];
