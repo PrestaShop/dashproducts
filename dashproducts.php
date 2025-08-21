@@ -193,7 +193,7 @@ class dashproducts extends Module
             ],
         ];
 
-        $products = Db::getInstance()->ExecuteS(
+        $products = Db::getInstance()->executeS(
             '
 					SELECT
 						product_id,
