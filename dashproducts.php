@@ -218,7 +218,7 @@ class dashproducts extends Module
         $body = [];
         if (!empty($products)) {
             foreach ($products as $product) {
-                $product_obj = new Product((int)$product['product_id'], false, $this->context->language->id);
+                $product_obj = new Product((int) $product['product_id'], false, $this->context->language->id);
                 if (!Validate::isLoadedObject($product_obj)) {
                     continue;
                 }
@@ -231,7 +231,7 @@ class dashproducts extends Module
 
                 $img = '';
                 if (($row_image = Product::getCover($product_obj->id)) && $row_image['id_image']) {
-                    $image = new Image((int)$row_image['id_image']);
+                    $image = new Image((int) $row_image['id_image']);
                     $path_to_image = (defined('_PS_PRODUCT_IMG_DIR_') ? _PS_PRODUCT_IMG_DIR_ : _PS_PROD_IMG_DIR_) . $image->getExistingImgPath() . '.' . $this->context->controller->imageType;
                     $img = ImageManager::thumbnail($path_to_image, 'product_mini_' . $row_image['id_image'] . '.' . $this->context->controller->imageType, 45, $this->context->controller->imageType);
                 }
