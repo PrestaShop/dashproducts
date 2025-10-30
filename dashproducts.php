@@ -148,7 +148,7 @@ class dashproducts extends Module
                 'id' => 'details',
                 'value' => '',
                 'class' => 'text-right',
-                'wrapper_start' => '<a class="btn btn-default" href="index.php?controller=AdminOrders&id_order=' . (int) $order['id_order'] . '&vieworder&token=' . Tools::getAdminTokenLite('AdminOrders') . '" title="' . $this->trans('Details', [], 'Modules.Dashproducts.Admin') . '"><i class="icon-search"></i>',
+                'wrapper_start' => '<a class="btn btn-default" href="' . $this->context->link->getAdminLink('AdminOrders', true, [], ['id_order' => (int) $order['id_order'], 'vieworder' => 1]) . '" title="' . $this->trans('Details', [], 'Modules.Dashproducts.Admin') . '"><i class="icon-search"></i>',
                 'wrapper_end' => '</a>',
             ];
 
