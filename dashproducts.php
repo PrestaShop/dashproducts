@@ -33,7 +33,7 @@ class dashproducts extends Module
     {
         $this->name = 'dashproducts';
         $this->tab = 'administration';
-        $this->version = '2.1.4';
+        $this->version = '2.2.0';
         $this->author = 'PrestaShop';
 
         parent::__construct();
