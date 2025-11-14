@@ -33,7 +33,7 @@ class dashproducts extends Module
     {
         $this->name = 'dashproducts';
         $this->tab = 'administration';
-        $this->version = '2.1.4';
+        $this->version = '2.2.0';
         $this->author = 'PrestaShop';
 
         parent::__construct();
@@ -119,7 +119,7 @@ class dashproducts extends Module
                     ]),
                     Tools::htmlentitiesUTF8($order['firstname']),
                     Tools::htmlentitiesUTF8($order['lastname'])
-                ) : '',
+                ) : $this->trans('Deleted customer', [], 'AdminGlobal'),
                 'class' => 'text-left',
             ];
             $tr[] = [
@@ -148,7 +148,7 @@ class dashproducts extends Module
                 'id' => 'details',
                 'value' => '',
                 'class' => 'text-right',
-                'wrapper_start' => '<a class="btn btn-default" href="index.php?controller=AdminOrders&id_order=' . (int) $order['id_order'] . '&vieworder&token=' . Tools::getAdminTokenLite('AdminOrders') . '" title="' . $this->trans('Details', [], 'Modules.Dashproducts.Admin') . '"><i class="icon-search"></i>',
+                'wrapper_start' => '<a class="btn btn-default" href="' . $this->context->link->getAdminLink('AdminOrders', true, [], ['id_order' => (int) $order['id_order'], 'vieworder' => 1]) . '" title="' . $this->trans('Details', [], 'Modules.Dashproducts.Admin') . '"><i class="icon-search"></i>',
                 'wrapper_end' => '</a>',
             ];
 
@@ -198,7 +198,7 @@ class dashproducts extends Module
 					SELECT
 						product_id,
 						product_name,
-						SUM(product_quantity-product_quantity_refunded-product_quantity_return-product_quantity_reinjected) as total,
+						SUM(product_quantity-product_quantity_refunded-product_quantity_return) as total,
 						p.price as price,
 						pa.price as price_attribute,
 						SUM(total_price_tax_excl / conversion_rate) as sales,
@@ -471,7 +471,7 @@ class dashproducts extends Module
         WHERE pt.`name` = \'product\'
         ' . Shop::addSqlRestriction(false, 'pv') . '
         AND dr.`time_start` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . '"
-        AND dr.`time_end` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . '"
+        AND dr.`time_end` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . ' 23:59:59"
         ORDER BY pv.counter DESC
         LIMIT ' . (int) $limit);
     }
@@ -485,7 +485,7 @@ class dashproducts extends Module
         return Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS('
 		SELECT `keywords`, count(`id_statssearch`) as count_keywords, `results`
 		FROM `' . _DB_PREFIX_ . 'statssearch` ss
-		WHERE ss.`date_add` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . '"
+		WHERE ss.`date_add` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . ' 23:59:59"
 		' . Shop::addSqlRestriction(false, 'ss') . '
 		GROUP BY ss.`keywords`
 		ORDER BY `count_keywords` DESC
