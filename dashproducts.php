@@ -33,7 +33,7 @@ class dashproducts extends Module
     {
         $this->name = 'dashproducts';
         $this->tab = 'administration';
-        $this->version = '2.2.0';
+        $this->version = '2.2.1';
         $this->author = 'PrestaShop';
 
         parent::__construct();
@@ -119,7 +119,7 @@ class dashproducts extends Module
                     ]),
                     Tools::htmlentitiesUTF8($order['firstname']),
                     Tools::htmlentitiesUTF8($order['lastname'])
-                ) : $this->trans('Deleted customer', [], 'AdminGlobal'),
+                ) : $this->trans('Deleted customer', [], 'Admin.Global'),
                 'class' => 'text-left',
             ];
             $tr[] = [
