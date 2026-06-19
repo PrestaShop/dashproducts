@@ -223,6 +223,7 @@ class dashproducts extends Module
             }
 
             $productCategoryId = $product_obj->getDefaultCategory();
+            // @phpstan-ignore-next-line (Need for 8.2.x)
             if (is_array($productCategoryId) && isset($productCategoryId['id_category_default'])) {
                 $productCategoryId = $productCategoryId['id_category_default'];
             }
@@ -231,7 +232,7 @@ class dashproducts extends Module
             $img = '';
             if (($row_image = Product::getCover($product_obj->id)) && $row_image['id_image']) {
                 $image = new Image((int) $row_image['id_image']);
-                $path_to_image = (defined('_PS_PRODUCT_IMG_DIR_') ? _PS_PRODUCT_IMG_DIR_ : _PS_PROD_IMG_DIR_) . $image->getExistingImgPath() . '.' . $this->context->controller->imageType;
+                $path_to_image = _PS_PRODUCT_IMG_DIR_ . $image->getExistingImgPath() . '.' . $this->context->controller->imageType;
                 $img = ImageManager::thumbnail($path_to_image, 'product_mini_' . $row_image['id_image'] . '.' . $this->context->controller->imageType, 45, $this->context->controller->imageType);
             }
 
@@ -326,7 +327,7 @@ class dashproducts extends Module
                     $img = '';
                     if (($row_image = Product::getCover($product_obj->id)) && $row_image['id_image']) {
                         $image = new Image((int) $row_image['id_image']);
-                        $path_to_image = (defined('_PS_PRODUCT_IMG_DIR_') ? _PS_PRODUCT_IMG_DIR_ : _PS_PROD_IMG_DIR_) . $image->getExistingImgPath() . '.' . $this->context->controller->imageType;
+                        $path_to_image = _PS_PRODUCT_IMG_DIR_ . $image->getExistingImgPath() . '.' . $this->context->controller->imageType;
                         $img = ImageManager::thumbnail(
                             $path_to_image,
                             'product_mini_' . $product_obj->id . '.' . $this->context->controller->imageType,
