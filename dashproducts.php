@@ -39,7 +39,7 @@ class dashproducts extends Module
         parent::__construct();
         $this->displayName = $this->trans('Dashboard Products', [], 'Modules.Dashproducts.Admin');
         $this->description = $this->trans('Enrich your stats: display a table of your latest orders and a ranking of your products.', [], 'Modules.Dashproducts.Admin');
-        $this->ps_versions_compliancy = ['min' => '1.7.6.0', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '8.2.0', 'max' => _PS_VERSION_];
     }
 
     public function install()
