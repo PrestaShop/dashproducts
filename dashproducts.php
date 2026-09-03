@@ -23,6 +23,9 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
+use Twig\Environment;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -33,7 +36,7 @@ class dashproducts extends Module
     {
         $this->name = 'dashproducts';
         $this->tab = 'administration';
-        $this->version = '2.2.1';
+        $this->version = '2.3.0';
         $this->author = 'PrestaShop';
 
         parent::__construct();
@@ -49,10 +52,41 @@ class dashproducts extends Module
         Configuration::updateValue('DASHPRODUCT_NBR_SHOW_MOST_VIEWED', 10);
         Configuration::updateValue('DASHPRODUCT_NBR_SHOW_TOP_SEARCH', 10);
 
-        return parent::install()
+        // Hidden tab (id_parent -1): only used to back the settings route's ACL.
+        $tab = new Tab();
+        $tab->active = true;
+        $tab->class_name = 'AdminDashproductsConfiguration';
+        $tab->name = [];
+        foreach (Language::getLanguages(true) as $lang) {
+            $tab->name[$lang['id_lang']] = 'Dashproducts configuration';
+        }
+        $tab->id_parent = -1;
+        $tab->module = $this->name;
+
+        return $tab->add()
+            && parent::install()
             && $this->registerHook('dashboardZoneTwo')
             && $this->registerHook('dashboardData')
+            // Modern counterpart of dashboardZoneTwo, registered alongside it (#41971).
+            && $this->registerHook('displayAdminDashboardZoneTwo')
         ;
+    }
+
+    public function uninstall()
+    {
+        $idTab = (int) Tab::getIdFromClassName('AdminDashproductsConfiguration');
+        if ($idTab) {
+            (new Tab($idTab))->delete();
+        }
+
+        return parent::uninstall();
+    }
+
+    public function getContent()
+    {
+        Tools::redirectAdmin(
+            SymfonyContainer::getInstance()->get('router')->generate('dashproducts_configuration')
+        );
     }
 
     public function hookDashboardZoneTwo($params)
@@ -88,6 +122,48 @@ class dashproducts extends Module
                 'table_top_10_most_search' => $table_top_10_most_search,
             ],
         ];
+    }
+
+    /**
+     * Modern counterpart of hookDashboardZoneTwo(). Tables are plain server-rendered HTML.
+     */
+    public function hookDisplayAdminDashboardZoneTwo(array $params)
+    {
+        $data = $this->hookDashboardData($params);
+
+        return $this->render('zone_two.html.twig', [
+            'configUrl' => $this->getConfigUrl(),
+            'tables' => [
+                ['title' => $this->trans('Recent orders', [], 'Modules.Dashproducts.Admin'), 'table' => $data['data_table']['table_recent_orders']],
+                ['title' => $this->trans('Best sellers', [], 'Modules.Dashproducts.Admin'), 'table' => $data['data_table']['table_best_sellers']],
+                ['title' => $this->trans('Most viewed products', [], 'Modules.Dashproducts.Admin'), 'table' => $data['data_table']['table_most_viewed']],
+                ['title' => $this->trans('Top search', [], 'Modules.Dashproducts.Admin'), 'table' => $data['data_table']['table_top_10_most_search']],
+            ],
+        ]);
+    }
+
+    private function render(string $template, array $params = []): string
+    {
+        $twig = $this->get('twig');
+        if (!$twig instanceof Environment) {
+            return '';
+        }
+
+        return $twig->render('@Modules/dashproducts/views/templates/admin/' . $template, $params);
+    }
+
+    /**
+     * Null (no "Configure" link shown) when the current employee can't configure this module.
+     */
+    private function getConfigUrl(): ?string
+    {
+        if (!$this->getPermission('configure')) {
+            return null;
+        }
+
+        return SymfonyContainer::getInstance()->get('router')->generate('dashproducts_configuration', [
+            'token' => Tools::getAdminTokenLite('AdminDashproductsConfiguration'),
+        ]);
     }
 
     public function getTableRecentOrders()

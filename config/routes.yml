@@ -1,0 +1,7 @@
+dashproducts_configuration:
+  path: /dashproducts/configuration
+  methods: [GET, POST]
+  defaults:
+    _controller: PrestaShop\Module\DashProducts\Controller\ConfigurationController::indexAction
+    _legacy_controller: AdminDashproductsConfiguration
+    _legacy_link: AdminDashproductsConfiguration

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
-	<name>dashproducts</name>
-	<displayName><![CDATA[Dashboard Products]]></displayName>
-	<version><![CDATA[2.2.1]]></version>
-	<description><![CDATA[Adds a block with a table of your latest orders and a ranking of your products]]></description>
-	<author><![CDATA[PrestaShop]]></author>
-	<tab><![CDATA[dashboard]]></tab>
-	<is_configurable>0</is_configurable>
-	<need_instance>1</need_instance>
-	<limited_countries></limited_countries>
+    <name>dashproducts</name>
+    <displayName><![CDATA[Dashboard Products]]></displayName>
+    <version><![CDATA[2.3.0]]></version>
+    <description><![CDATA[Enrich your stats: display a table of your latest orders and a ranking of your products.]]></description>
+    <author><![CDATA[PrestaShop]]></author>
+    <tab><![CDATA[administration]]></tab>
+    <is_configurable>0</is_configurable>
+    <need_instance>1</need_instance>
 </module>
