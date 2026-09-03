@@ -1,0 +1,37 @@
+{#
+ # For the full copyright and license information, please view the
+ # docs/licenses/LICENSE.txt file that was distributed with this source code.
+ #}
+{% import '@PrestaShop/Admin/Dashboard/_partials/card_header.html.twig' as dashboard %}
+
+{% for entry in tables %}
+  <div class="card mb-3">
+    {{ dashboard.renderCardHeader(entry.title, null, loop.first ? configUrl : null) }}
+    <div class="card-body table-responsive">
+      {% if entry.table.body is iterable and entry.table.body|length %}
+        <table class="table">
+          <thead>
+            <tr>
+              {% for column in entry.table.header %}
+                <th class="{{ column.class }}">{{ column.title }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in entry.table.body %}
+              <tr>
+                {% for cell in row %}
+                  <td class="{{ cell.class }}">{{ cell.wrapper_start|default('')|raw }}{{ cell.value|raw }}{{ cell.wrapper_end|default('')|raw }}</td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% elseif entry.table.body is iterable %}
+        <p class="text-muted mb-0">{{ 'No data'|trans({}, 'Admin.Global') }}</p>
+      {% else %}
+        {{ entry.table.body|raw }}
+      {% endif %}
+    </div>
+  </div>
+{% endfor %}
