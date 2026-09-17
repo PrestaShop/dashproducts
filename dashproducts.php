@@ -23,6 +23,9 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
+use Twig\Environment;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -33,7 +36,7 @@ class dashproducts extends Module
     {
         $this->name = 'dashproducts';
         $this->tab = 'administration';
-        $this->version = '2.2.1';
+        $this->version = '2.3.0';
         $this->author = 'PrestaShop';
 
         parent::__construct();
@@ -50,9 +53,52 @@ class dashproducts extends Module
         Configuration::updateValue('DASHPRODUCT_NBR_SHOW_TOP_SEARCH', 10);
 
         return parent::install()
+            && $this->createConfigurationTab()
             && $this->registerHook('dashboardZoneTwo')
             && $this->registerHook('dashboardData')
+            // Modern counterpart of dashboardZoneTwo, registered alongside it (#41971).
+            && $this->registerHook('displayAdminDashboardZoneTwo')
         ;
+    }
+
+    public function uninstall()
+    {
+        $idTab = (int) Tab::getIdFromClassName('AdminDashproductsConfiguration');
+        if ($idTab) {
+            (new Tab($idTab))->delete();
+        }
+
+        return parent::uninstall();
+    }
+
+    /**
+     * Hidden tab (id_parent -1): only used to back the settings route's ACL. Shared between
+     * install() and the 2.3.0 upgrade script so shops upgrading from an earlier version get it too.
+     */
+    public function createConfigurationTab(): bool
+    {
+        if (Tab::getIdFromClassName('AdminDashproductsConfiguration')) {
+            return true;
+        }
+
+        $tab = new Tab();
+        $tab->active = true;
+        $tab->class_name = 'AdminDashproductsConfiguration';
+        $tab->name = [];
+        foreach (Language::getLanguages(true) as $lang) {
+            $tab->name[$lang['id_lang']] = 'Dashproducts configuration';
+        }
+        $tab->id_parent = -1;
+        $tab->module = $this->name;
+
+        return $tab->add();
+    }
+
+    public function getContent()
+    {
+        Tools::redirectAdmin(
+            SymfonyContainer::getInstance()->get('router')->generate('dashproducts_configuration')
+        );
     }
 
     public function hookDashboardZoneTwo($params)
@@ -88,6 +134,46 @@ class dashproducts extends Module
                 'table_top_10_most_search' => $table_top_10_most_search,
             ],
         ];
+    }
+
+    /**
+     * Modern counterpart of hookDashboardZoneTwo(). Tables are plain server-rendered HTML.
+     */
+    public function hookDisplayAdminDashboardZoneTwo(array $params)
+    {
+        $data = $this->hookDashboardData($params);
+
+        return $this->render('zone_two.html.twig', [
+            'configUrl' => $this->getConfigUrl(),
+            'tables' => [
+                ['title' => $this->trans('Recent Orders', [], 'Modules.Dashproducts.Admin'), 'table' => $data['data_table']['table_recent_orders']],
+                ['title' => $this->trans('Best Sellers', [], 'Modules.Dashproducts.Admin'), 'table' => $data['data_table']['table_best_sellers']],
+                ['title' => $this->trans('Most Viewed', [], 'Modules.Dashproducts.Admin'), 'table' => $data['data_table']['table_most_viewed']],
+                ['title' => $this->trans('Top Searches', [], 'Modules.Dashproducts.Admin'), 'table' => $data['data_table']['table_top_10_most_search']],
+            ],
+        ]);
+    }
+
+    private function render(string $template, array $params = []): string
+    {
+        $twig = $this->get('twig');
+        if (!$twig instanceof Environment) {
+            return '';
+        }
+
+        return $twig->render('@Modules/dashproducts/views/templates/admin/' . $template, $params);
+    }
+
+    /**
+     * Null (no "Configure" link shown) when the current employee can't configure this module.
+     */
+    private function getConfigUrl(): ?string
+    {
+        if (!Tab::checkTabRights((int) Tab::getIdFromClassName('AdminDashproductsConfiguration'))) {
+            return null;
+        }
+
+        return SymfonyContainer::getInstance()->get('router')->generate('dashproducts_configuration');
     }
 
     public function getTableRecentOrders()
@@ -132,7 +218,7 @@ class dashproducts extends Module
                 'value' => $this->context->getCurrentLocale()->formatPrice((float) $order['total_paid_tax_excl'], $currency['iso_code']),
                 'class' => 'text-center',
                 'wrapper_start' => $order['valid'] ? '<span class="badge badge-success">' : '',
-                'wrapper_end' => '<span>',
+                'wrapper_end' => $order['valid'] ? '</span>' : '',
             ];
             $tr[] = [
                 'id' => 'date_add',
@@ -148,7 +234,7 @@ class dashproducts extends Module
                 'id' => 'details',
                 'value' => '',
                 'class' => 'text-right',
-                'wrapper_start' => '<a class="btn btn-default" href="' . $this->context->link->getAdminLink('AdminOrders', true, [], ['id_order' => (int) $order['id_order'], 'vieworder' => 1]) . '" title="' . $this->trans('Details', [], 'Modules.Dashproducts.Admin') . '"><i class="icon-search"></i>',
+                'wrapper_start' => '<a class="btn btn-default" href="' . $this->context->link->getAdminLink('AdminOrders', true, [], ['id_order' => (int) $order['id_order'], 'vieworder' => 1]) . '" title="' . $this->trans('Details', [], 'Modules.Dashproducts.Admin') . '"><i class="material-icons">search</i>',
                 'wrapper_end' => '</a>',
             ];
 
@@ -406,7 +492,9 @@ class dashproducts extends Module
                 $tr = [];
                 $tr[] = [
                     'id' => 'product',
-                    'value' => $term['keywords'],
+                    // Customer-supplied search terms: escaped, unlike other columns in this
+                    // table which are trusted server-computed numbers.
+                    'value' => Tools::htmlentitiesUTF8($term['keywords']),
                     'class' => 'text-left',
                 ];
                 $tr[] = [
