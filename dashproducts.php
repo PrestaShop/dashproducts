@@ -447,7 +447,7 @@ class dashproducts extends Module
                     $purchased = $this->getTotalProductPurchased($date_from, $date_to, (int) $product_obj->id);
                     $tr[] = [
                         'id' => 'purchased',
-                        'value' => $this->getTotalProductPurchased($date_from, $date_to, (int) $product_obj->id),
+                        'value' => $purchased,
                         'class' => 'text-center',
                     ];
                     $tr[] = [
