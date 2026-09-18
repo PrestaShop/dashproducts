@@ -21,5 +21,10 @@
     "optimize-autoloader": true,
     "prepend-autoloader": false
   },
+  "autoload": {
+    "psr-4": {
+      "PrestaShop\\Module\\DashProducts\\": "src/"
+    }
+  },
   "type": "prestashop-module"
 }
