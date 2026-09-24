@@ -2,7 +2,7 @@
 <module>
 	<name>dashproducts</name>
 	<displayName><![CDATA[Dashboard Products]]></displayName>
-	<version><![CDATA[2.3.0]]></version>
+	<version><![CDATA[3.0.0]]></version>
 	<description><![CDATA[Enrich your stats: display a table of your latest orders and a ranking of your products.]]></description>
 	<author><![CDATA[PrestaShop]]></author>
 	<tab><![CDATA[administration]]></tab>

@@ -51,6 +51,15 @@ class ConfigurationController extends FrameworkBundleAdminController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->denyAccessUnlessGranted('update', $request->attributes->get('_legacy_controller'));
 
+            // No @DemoRestricted attribute here: its listener only recognizes the PHP 8
+            // attribute form (PrestaShopBundle\Security\Attribute\DemoRestricted), which
+            // doesn't exist on PS 8.2 — this module's declared minimum version.
+            if ($this->isDemoModeEnabled()) {
+                $this->addFlash('error', $this->trans('This functionality has been disabled.', 'Admin.Notifications.Error'));
+
+                return $this->redirectToRoute('dashproducts_configuration');
+            }
+
             foreach ($form->getData() as $field => $value) {
                 Configuration::updateValue($field, (int) $value);
             }
