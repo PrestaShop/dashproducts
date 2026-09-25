@@ -73,7 +73,7 @@ class dashproducts extends Module
 
     /**
      * Hidden tab (id_parent -1): only used to back the settings route's ACL. Shared between
-     * install() and the 2.3.0 upgrade script so shops upgrading from an earlier version get it too.
+     * install() and the 3.0.0 upgrade script so shops upgrading from an earlier version get it too.
      */
     public function createConfigurationTab(): bool
     {
