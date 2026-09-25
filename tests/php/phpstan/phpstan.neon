@@ -1,2 +1,10 @@
   # Base PHPStan configuration for the module
   # This file is included by version-specific configs
+
+parameters:
+    # Reset to auto-detection: the shared CI action injects a phpVersion computed from the
+    # matrix's php-version input, which some older PrestaShop releases' pinned PHPStan can't
+    # parse once that input reaches a version newer than its own release date (PHPStan's
+    # phpVersion schema is capped at whatever PHP existed when that PHPStan version shipped).
+    # Included last, so this wins over the injected value (see PrestaShop/.github#phpstan).
+    phpVersion: null
