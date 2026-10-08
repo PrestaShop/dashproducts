@@ -464,7 +464,7 @@ class dashproducts extends Module
     public function getTotalViewed($date_from, $date_to, $limit = 10)
     {
         return Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS('
-        SELECT p.id_object, pv.counter
+        SELECT p.id_object, SUM(pv.counter) AS counter
         FROM `' . _DB_PREFIX_ . 'page_viewed` pv
         LEFT JOIN `' . _DB_PREFIX_ . 'date_range` dr ON pv.`id_date_range` = dr.`id_date_range`
         LEFT JOIN `' . _DB_PREFIX_ . 'page` p ON pv.`id_page` = p.`id_page`
@@ -473,7 +473,8 @@ class dashproducts extends Module
         ' . Shop::addSqlRestriction(false, 'pv') . '
         AND dr.`time_start` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . '"
         AND dr.`time_end` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . ' 23:59:59"
-        ORDER BY pv.counter DESC
+        GROUP BY p.id_object
+        ORDER BY SUM(pv.counter) DESC, p.id_object
         LIMIT ' . (int) $limit);
     }
 
